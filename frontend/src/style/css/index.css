@@ -39,15 +39,20 @@
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.8);
   color: rgb(23, 26, 73);
-  height: 250px;
+  height: 150px;
 }
 .SpinnerContainer .Message {
-  position: relative;
+  position: absolute;
+  transform: translate(-50%, 0);
+  left: 50%;
+  width: 300px;
 }
 .SpinnerContainer .Spinner {
-  transform: translate(-200px, 0);
   display: inline-block;
-  position: relative;
+  position: absolute;
+  transform: translate(-50%, 0);
+  top: 50px;
+  left: 50%;
   width: 80px;
   height: 80px;
 }

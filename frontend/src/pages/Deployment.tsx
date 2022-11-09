@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { deployNewAA } from "../chain/interactions";
 import Spinner from "../components/Spinner";
 
-const Deployment = () => {
+const Deployment = (props: { state: any; updateState: any }) => {
     const navigate = useNavigate();
     const [ownerAddr, setOwnerAddr] = useState("");
     const [displayMessage, setDisplayMessage] = useState("");
@@ -53,6 +53,13 @@ const Deployment = () => {
                         setDisplayMessage("Awaiting signature...");
                         const { aaAddr } = await deployNewAA({ ownerAddr });
                         setDisplayMessage("Broadcasting transaction...");
+                        props.updateState({
+                            alert: {
+                                ...props.state.alert,
+                                isOpen: true,
+                                message: "Transaction submitted",
+                            },
+                        });
                         navigate(`/management/${aaAddr}`);
                     }}
                 >

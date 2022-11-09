@@ -91,6 +91,12 @@ const createLimitPlugin = async (props: { address: string; limit: string }) => {
     return { err: "" };
 };
 
+const greet = async (props: { message: string; amount: string }) => {
+    await delay();
+
+    return { err: "" };
+};
+
 export {
     init,
     deployNewAA,
@@ -98,4 +104,5 @@ export {
     getSigner,
     getAccount,
     createLimitPlugin,
+    greet,
 };

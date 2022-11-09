@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
 import Deployment from "./pages/Deployment";
 import Management from "./pages/Management";
 
+import Navbar from "./components/Navbar";
+
 import "./style/css/App.css";
 import "./style/css/config.css";
-import Home from "./pages/Home";
 
 const App = () => {
     const [state, setState] = useState({
@@ -34,11 +35,32 @@ const App = () => {
                         }
                     ></Route>
 
-                    <Route path="/deployment" element={<Deployment />}></Route>
-                    <Route path="/management" element={<Management />}></Route>
+                    <Route
+                        path="/deployment"
+                        element={
+                            <Deployment
+                                state={state}
+                                updateState={updateState}
+                            />
+                        }
+                    ></Route>
+                    <Route
+                        path="/management"
+                        element={
+                            <Management
+                                state={state}
+                                updateState={updateState}
+                            />
+                        }
+                    ></Route>
                     <Route
                         path="/management/:initialAaAddr"
-                        element={<Management />}
+                        element={
+                            <Management
+                                state={state}
+                                updateState={updateState}
+                            />
+                        }
                     ></Route>
 
                     <Route path="*" element={<Navigate to="/" />}></Route>

@@ -1,3 +1,22 @@
+.AlertContainer {
+  position: absolute;
+  text-align: center;
+  top: 20px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  padding: 20px;
+  width: 400px !important;
+  border-radius: 5px;
+}
+
+.error {
+  background-color: rgba(235, 60, 60, 0.864);
+}
+
+.success {
+  background-color: rgba(60, 235, 60, 0.864);
+}
+
 .Button0 {
   color: #f8f9fa;
   background-color: #4e529a;

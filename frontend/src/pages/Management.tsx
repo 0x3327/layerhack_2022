@@ -21,7 +21,7 @@ type PluginData = {
     limit: string;
 };
 
-const Management = () => {
+const Management = (props: { state: any; updateState: any }) => {
     const navigate = useNavigate();
     const { initialAaAddr } = useParams();
     const [aaAddr, setAaAddr] = useState(
