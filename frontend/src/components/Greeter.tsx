@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Spinner from "./Spinner";
 import Alert from "./Alert";
 
-import { greet } from "../chain/interactions";
+import { setGreeting, retrieveGreeting } from "../chain/interactions";
 
-const Greeter = (props: { isOpen: boolean; close: any }) => {
+const Greeter = (props: { aaAddr: string; isOpen: boolean; close: any }) => {
+    const [currentMessage, setCurrentMessage] = useState("fetching...");
     const [newMessage, setNewMessage] = useState("");
     const [amount, setAmount] = useState("0");
 
@@ -30,6 +31,13 @@ const Greeter = (props: { isOpen: boolean; close: any }) => {
     const closeAlert = () => {
         updateAlertInfo({ isOpen: false });
     };
+    const reload = async () => {
+        const { err, greeting } = await retrieveGreeting();
+        setCurrentMessage(greeting);
+    };
+    useEffect(() => {
+        reload();
+    }, []);
 
     if (props.isOpen == false) {
         return null;
@@ -58,8 +66,10 @@ const Greeter = (props: { isOpen: boolean; close: any }) => {
                     <div className="Field">
                         <div className="Name">Current message:</div>
                         <div className="CurrentMessage">
-                            <div className="Value">Hello zkSync</div>
-                            <div className="Button1">Refresh</div>
+                            <div className="Value">{currentMessage}</div>
+                            <div className="Button1" onClick={reload}>
+                                Refresh
+                            </div>
                         </div>
                     </div>
                     <div className="Field">
@@ -86,7 +96,8 @@ const Greeter = (props: { isOpen: boolean; close: any }) => {
                             message: "Transaction signing pending...",
                         });
 
-                        const { err } = await greet({
+                        const { err } = await setGreeting({
+                            aaAddr: props.aaAddr,
                             message: newMessage,
                             amount,
                         });

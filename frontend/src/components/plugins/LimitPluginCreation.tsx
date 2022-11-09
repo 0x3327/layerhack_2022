@@ -5,9 +5,16 @@ import { createLimitPlugin } from "../../chain/interactions";
 
 import Spinner from "../Spinner";
 
-const LimitPluginCreation = (props: { isOpen: boolean; close: any }) => {
+const LimitPluginCreation = (props: {
+    aaAddr: string;
+    isOpen: boolean;
+    close: any;
+}) => {
     const [spinnerOpen, setSpinnerOpen] = useState(false);
     const [spinnerMessage, setSpinnerMessage] = useState("");
+
+    const [authority, setAuthority] = useState("");
+    const [limit, setLimit] = useState("");
 
     if (props.isOpen == false) {
         return null;
@@ -30,11 +37,17 @@ const LimitPluginCreation = (props: { isOpen: boolean; close: any }) => {
                 <div className="FieldsContainer">
                     <div className="Field">
                         <div className="Name">Authority:</div>
-                        <input className="Input0"></input>
+                        <input
+                            className="Input0"
+                            onChange={(e) => setAuthority(e.target.value)}
+                        ></input>
                     </div>
                     <div className="Field">
                         <div className="Name">Amount:</div>
-                        <input className="Input0"></input>
+                        <input
+                            className="Input0"
+                            onChange={(e) => setLimit(e.target.value)}
+                        ></input>
                     </div>
                 </div>
                 <div
@@ -43,8 +56,9 @@ const LimitPluginCreation = (props: { isOpen: boolean; close: any }) => {
                         setSpinnerOpen(true);
                         setSpinnerMessage("Creating Limit Plugin");
                         const { err } = await createLimitPlugin({
-                            address: "",
-                            limit: "",
+                            aaAddr: props.aaAddr,
+                            address: authority,
+                            limit,
                         });
                         if (err == "") {
                             //alert:TODO

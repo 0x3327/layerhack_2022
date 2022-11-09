@@ -67,10 +67,12 @@ const Management = (props: { state: any; updateState: any }) => {
     return (
         <div className="Management">
             <Greeter
+                aaAddr={aaAddr}
                 isOpen={greeterOpen}
                 close={() => setGreeterOpen(false)}
             ></Greeter>
             <LimitPluginCreation
+                aaAddr={aaAddr}
                 isOpen={limitPluginCreationOpen}
                 close={() => setLimitPluginCreationOpen(false)}
             ></LimitPluginCreation>
