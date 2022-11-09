@@ -8,7 +8,6 @@ import {
     useNavigate,
 } from "react-router-dom";
 import { getAA_Info, init } from "../chain/interactions";
-import Loader from "../components/Loader";
 import Spinner from "../components/Spinner";
 import LimitPluginInfo from "../components/plugins/LimitPluginInfo";
 import LimitPluginCreation from "../components/plugins/LimitPluginCreation";
@@ -28,6 +27,7 @@ const Management = (props: { state: any; updateState: any }) => {
         initialAaAddr === undefined ? "" : initialAaAddr
     );
     const [isLoadingInfo, setIsLoadingInfo] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState("");
 
     const [aaBalance, setAaBalance] = useState("");
     const [aaPlugins, setAaPlugins] = useState(Array<PluginData>);
@@ -43,13 +43,22 @@ const Management = (props: { state: any; updateState: any }) => {
         setAaAddr(aaAddr);
         setAaBalance("fetching...");
         setAaPlugins([]);
+        setLoadingMessage("Fetching AA information...");
 
-        const { balance, plugins } = await getAA_Info({
+        const { balance, plugins, err } = await getAA_Info({
             addr: aaAddr,
         });
-        setAaBalance(balance);
-        setAaPlugins(plugins);
-        setIsLoadingInfo(false);
+        if (err == "") {
+            setAaBalance(balance);
+            setAaPlugins(plugins);
+            setIsLoadingInfo(false);
+        } else {
+            setLoadingMessage(
+                `Error: ${err} - Change the AA adress and try again.`
+            );
+
+            setTimeout(() => setIsLoadingInfo(false), 1000);
+        }
     };
 
     useEffect(() => {
@@ -98,10 +107,7 @@ const Management = (props: { state: any; updateState: any }) => {
                 </div>
             </div>
             <div>
-                <Spinner
-                    isOpen={isLoadingInfo}
-                    message={"Fetching account information..."}
-                />
+                <Spinner isOpen={isLoadingInfo} message={loadingMessage} />
                 <div className="AA_Info">
                     <div className="Field">
                         <div className="Identifier">Balance:</div>

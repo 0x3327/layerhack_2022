@@ -8,6 +8,9 @@ import Alert from "./Alert";
 import { greet } from "../chain/interactions";
 
 const Greeter = (props: { isOpen: boolean; close: any }) => {
+    const [newMessage, setNewMessage] = useState("");
+    const [amount, setAmount] = useState("0");
+
     const [alertInfo, setAlertInfo] = useState({
         isOpen: false,
         message: "",
@@ -42,7 +45,7 @@ const Greeter = (props: { isOpen: boolean; close: any }) => {
             ></Alert>
             <Spinner
                 isOpen={spinnerInfo.isOpen && alertInfo.isOpen == false}
-                message="Broadcasting..."
+                message={spinnerInfo.message}
             ></Spinner>
             <div className="Greeter">
                 <div className="Container0">
@@ -61,20 +64,31 @@ const Greeter = (props: { isOpen: boolean; close: any }) => {
                     </div>
                     <div className="Field">
                         <div className="Name">New message:</div>
-                        <input className="Input0"></input>
+                        <input
+                            className="Input0"
+                            onChange={(e) => setNewMessage(e.target.value)}
+                        ></input>
                     </div>
                     <div className="Field">
                         <div className="Name">Amount:</div>
-                        <input className="Input0"></input>
+                        <input
+                            className="Input0"
+                            type="number"
+                            onChange={(e) => setAmount(e.target.value)}
+                        ></input>
                     </div>
                 </div>
                 <div
                     className="Button0"
                     onClick={async () => {
-                        updateSpinnerInfo({ isOpen: true });
+                        updateSpinnerInfo({
+                            isOpen: true,
+                            message: "Transaction signing pending...",
+                        });
+
                         const { err } = await greet({
-                            message: "Hello",
-                            amount: "0.2",
+                            message: newMessage,
+                            amount,
                         });
                         updateSpinnerInfo({ isOpen: false });
                         if (err == "") {

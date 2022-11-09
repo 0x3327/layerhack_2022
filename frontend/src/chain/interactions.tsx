@@ -50,6 +50,7 @@ const init = async (props: { updateState: any }) => {
 };
 
 const deployNewAA = async (props: { ownerAddr: string }) => {
+    console.log("called", { deployNewAA: props });
     const { ownerAddr } = props;
 
     await delay();
@@ -61,9 +62,12 @@ const deployNewAA = async (props: { ownerAddr: string }) => {
 };
 
 const getAA_Info = async (props: { addr: string }) => {
+    console.log("called", { getAA_Info: props });
+
     const { addr } = props;
     await delay();
     return {
+        err: "",
         balance: "1.533367 ETH",
         plugins: [
             {
@@ -86,12 +90,16 @@ const getAA_Info = async (props: { addr: string }) => {
 };
 
 const createLimitPlugin = async (props: { address: string; limit: string }) => {
+    console.log("called", { createLimitPlugin: props });
+
     await delay();
 
     return { err: "" };
 };
 
 const greet = async (props: { message: string; amount: string }) => {
+    console.log("called", { greet: props });
+
     await delay();
 
     return { err: "" };

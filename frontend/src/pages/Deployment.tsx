@@ -51,16 +51,16 @@ const Deployment = (props: { state: any; updateState: any }) => {
                     className="Button0"
                     onClick={async () => {
                         setDisplayMessage("Awaiting signature...");
-                        const { aaAddr } = await deployNewAA({ ownerAddr });
-                        setDisplayMessage("Broadcasting transaction...");
-                        props.updateState({
-                            alert: {
-                                ...props.state.alert,
-                                isOpen: true,
-                                message: "Transaction submitted",
-                            },
+                        const { err, aaAddr } = await deployNewAA({
+                            ownerAddr,
                         });
-                        navigate(`/management/${aaAddr}`);
+
+                        setDisplayMessage("Broadcasting transaction...");
+                        if (err == "") {
+                            navigate(`/management/${aaAddr}`);
+                        } else {
+                            //TODO: display error message
+                        }
                     }}
                 >
                     Deploy new AA

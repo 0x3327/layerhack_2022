@@ -21,8 +21,6 @@ const App = () => {
         setState({ ...state, ...newValues });
     };
 
-    console.log({ state });
-
     return (
         <BrowserRouter>
             <div className="App">

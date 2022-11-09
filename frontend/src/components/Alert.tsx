@@ -11,7 +11,6 @@ const Alert = (props: {
     if (props.isOpen === false) {
         return null;
     }
-    console.log(props);
     setTimeout(props.close, 3000);
     return (
         <div className={`AlertContainer ${props.type}`}>
