@@ -34,3 +34,32 @@ We implemented a restriction that specifies how much value is a particular trans
 
 
 
+```mermaid
+sequenceDiagram
+    title Account Abstraction Plugin
+
+    alt Successful validation
+    User->Account:Please execute this transaction
+    activate Account
+    loop For each plugin
+        Account->Plugin:Is this transaction valid\naccording to you?
+        box over Plugin:<align:center>Check validation\nlogic</align>
+        Account<-Plugin:Yup, all good
+    end
+    Account->]:Execute transaction
+    deactivate Account
+
+    else Failed validation
+
+    User->Account:Please execute this transaction
+    activate Account
+    loop For each plugin
+        Account->Plugin:Is this transaction valid\naccording to you?
+        box over Plugin:<align:center>Check validation\nlogic</align>
+        Account<-Plugin:No, something's \nnot right
+    end
+    Account->User:This transaction is invalid
+    deactivate Account
+    
+    end
+```
