@@ -43,7 +43,7 @@ sequenceDiagram
     activate Account
     loop For each plugin
         Account->Plugin:Is this transaction valid\naccording to you?
-        box over Plugin:<align:center>Check validation\nlogic</align>
+        box over Plugin:Check validation\nlogic
         Account<-Plugin:Yup, all good
     end
     Account->]:Execute transaction
@@ -55,11 +55,11 @@ sequenceDiagram
     activate Account
     loop For each plugin
         Account->Plugin:Is this transaction valid\naccording to you?
-        box over Plugin:<align:center>Check validation\nlogic</align>
+        box over Plugin:Check validation\nlogic
         Account<-Plugin:No, something's \nnot right
     end
     Account->User:This transaction is invalid
     deactivate Account
-    
+
     end
 ```
