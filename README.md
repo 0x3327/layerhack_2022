@@ -32,34 +32,6 @@ During the execution of the `verifyTransaction` function, the `isValid` function
 
 We implemented a restriction that specifies how much value is a particular transaction allowed to have based on the signer of the transaction. This enables finer control over spending limits of certain keys a user has. For example, a specific wallet should not be allowed to spend more than 0.01 ETH in a single transaction. 
 
+## Sequence Diagram
 
-
-```mermaid
-sequenceDiagram
-    title Account Abstraction Plugin
-
-    alt Successful validation
-    User->>Account:Please execute this transaction
-    activate Account
-    loop For each plugin
-        Account->>Plugin:Is this transaction valid<br/>according to you?
-        Note over Plugin:Check validation<br/>logic
-        Plugin->>Account:Yup, all good
-    end
-    Note over Account:Execute transaction
-    deactivate Account
-
-    else Failed validation
-
-    User->>Account:Please execute this transaction
-    activate Account
-    loop For each plugin
-        Account->>Plugin:Is this transaction valid<br/>according to you?
-        Note over Plugin:Check validation<br/>logic
-        Plugin->>Account:No, something's<br/>not right
-    end
-    Account->>User:This transaction is invalid
-    deactivate Account
-
-    end
-```
+![AAP Diagram image](./AAP_Diagram.png)
