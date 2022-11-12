@@ -6,12 +6,19 @@ import sanitizedConfig from "../config";
 
 // An example of a deploy script deploys and calls a simple contract.
 export default async function (hre: HardhatRuntimeEnvironment) {
+    console.log(hre.config.zkSyncDeploy.zkSyncNetwork);
     const provider = new Provider(hre.config.zkSyncDeploy.zkSyncNetwork);
     const wallet = new Wallet(sanitizedConfig.PRIVATE_KEY).connect(provider);
     const factoryArtifact = await hre.artifacts.readArtifact("AAFactory");
-    const accountArtifact = await hre.artifacts.readArtifact("PluginableAccount");
+    const accountArtifact = await hre.artifacts.readArtifact(
+        "PluginableAccount"
+    );
 
-    const accountInstance = new ethers.Contract(sanitizedConfig.ACCOUNT_ADDRESS, accountArtifact.abi, wallet);
+    const accountInstance = new ethers.Contract(
+        sanitizedConfig.ACCOUNT_ADDRESS,
+        accountArtifact.abi,
+        wallet
+    );
 
     // The two owners of the multisig
     const owner = new Wallet(sanitizedConfig.PRIVATE_KEY);
@@ -21,7 +28,7 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     const abiCoder = new ethers.utils.AbiCoder();
     const pluginableAccountAddress = sanitizedConfig.ACCOUNT_ADDRESS;
     console.log(`Account deployed on address ${pluginableAccountAddress}`);
-    
+
     // await (
     //     await wallet.sendTransaction({
     //         to: pluginableAccountAddress,
@@ -29,8 +36,10 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     //         value: ethers.utils.parseEther("0.01"),
     //     })
     // ).wait();
-    
-    let aaTx = await accountInstance.populateTransaction.activatePlugin(sanitizedConfig.PLUGIN_ADDRESS);
+
+    let aaTx = await accountInstance.populateTransaction.activatePlugin(
+        sanitizedConfig.PLUGIN_ADDRESS
+    );
 
     const gasLimit = ethers.BigNumber.from("2000000");
     const gasPrice = await provider.getGasPrice();
@@ -52,17 +61,27 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     console.log(aaTx);
     const signedTxHash = EIP712Signer.getSignedDigest(aaTx);
 
-    const signature = ethers.utils.joinSignature(owner._signingKey().signDigest(signedTxHash));
+    const signature = ethers.utils.joinSignature(
+        owner._signingKey().signDigest(signedTxHash)
+    );
 
     aaTx.customData = {
         ...aaTx.customData,
         customSignature: signature,
     };
 
-    console.log(`The account's nonce before the first tx is ${await provider.getTransactionCount(pluginableAccountAddress)}`);
+    console.log(
+        `The account's nonce before the first tx is ${await provider.getTransactionCount(
+            pluginableAccountAddress
+        )}`
+    );
     const sentTx = await provider.sendTransaction(utils.serialize(aaTx));
     await sentTx.wait();
 
     // Checking that the nonce for the account has increased
-    console.log(`The account's nonce after the first tx is ${await provider.getTransactionCount(pluginableAccountAddress)}`);
+    console.log(
+        `The account's nonce after the first tx is ${await provider.getTransactionCount(
+            pluginableAccountAddress
+        )}`
+    );
 }

@@ -2,11 +2,11 @@ import { utils, Wallet } from "zksync-web3";
 import * as ethers from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
-
+import hre from "hardhat";
 import sanitizedConfig from "../config";
 
 // An example of a deploy script that will deploy and call a simple contract.
-export default async function (hre: HardhatRuntimeEnvironment) {
+const main = async (hre: HardhatRuntimeEnvironment) => {
     console.log(`Running deploy script for the Plugin contract`);
 
     // Initialize the wallet.
@@ -35,4 +35,6 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     // Show the contract info.
     const contractAddress = pluginContract.address;
     console.log(`${artifact.contractName} was deployed to ${contractAddress}`);
-}
+};
+
+main(hre).then(() => process.exit(0));

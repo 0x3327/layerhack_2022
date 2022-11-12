@@ -2,10 +2,11 @@ import { utils, Wallet } from "zksync-web3";
 import * as ethers from "ethers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
+const hre = require("hardhat");
 
 import sanitizedConfig from "../config";
 
-export default async function (hre: HardhatRuntimeEnvironment) {
+const main = async (hre: HardhatRuntimeEnvironment) => {
     const wallet = new Wallet(sanitizedConfig.PRIVATE_KEY);
     const deployer = new Deployer(hre, wallet);
     const factoryArtifact = await deployer.loadArtifact("AAFactory");
@@ -24,11 +25,26 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     // Getting the bytecodeHash of the account
     const bytecodeHash = utils.hashBytecode(aaArtifact.bytecode);
 
-    const factory = await deployer.deploy(factoryArtifact, [bytecodeHash], undefined, [
-        // Since the factory requires the code of the multisig to be available,
-        // we should pass it here as well.
-        aaArtifact.bytecode,
-    ]);
+    const factory = await deployer.deploy(
+        factoryArtifact,
+        [bytecodeHash],
+        undefined,
+        [
+            // Since the factory requires the code of the multisig to be available,
+            // we should pass it here as well.
+            aaArtifact.bytecode,
+        ]
+    );
 
     console.log(`Mock AA factory address: ${factory.address}`);
-}
+};
+
+main(hre)
+    .then(() => {
+        console.log(123);
+        process.exit(0);
+    })
+    .catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
