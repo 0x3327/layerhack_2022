@@ -9,5 +9,8 @@ typechain-types
 cache-zk
 artifacts-zk
 
+#backend files
+/backend/node_modules
+
 #Frontend files
 /frontend/node_modules

@@ -3,21 +3,18 @@ import { utils, Wallet, Provider, EIP712Signer, types } from "zksync-web3";
 
 import { MetaMaskInpageProvider } from "@metamask/providers";
 
-import AA_FACTORY_ARTIFACT from "./artifacts-zk/contracts/AAFactory.sol/AAFactory.json";
-import MOCK_AA_ARTIFACT from "./artifacts-zk/contracts/MockAccount.sol/MockAccount.json";
-import LIMITER_PLUGIN_ARTIFACT from "./artifacts-zk/contracts/LimiterPlugin.sol/Plugin.json";
-import GREETER_ARTIFACT from "./artifacts-zk/contracts/Greeter.sol/Greeter.json";
+import {
+    AA_FACTORY_ARTIFACT,
+    AA_ARTIFACT,
+    LIMITER_PLUGIN_ADDRESS,
+    LIMITER_PLUGIN_ARTIFACT,
+    AA_FACTORY_ADDRESS,
+    GREETER_ADDRESS,
+    GREETER_ARTIFACT,
+    ZKSYNC_URL_PROVIDER,
+} from "../config";
 
-const AA_FACTORY_ADDRESS = "0x28309d4f66C92Fe59E66C2b51aaa7E2aFa9DAF67";
-const MOCK_AA_ADDRESS = "0xbA6ea71dA2bE007e3A7b1664305D2fA9709d0be5";
-const LIMITER_PLUGIN_ADDRESS = "0x1e1284665417cFd5f7e723A2812dB53F52F644Fc";
-const GREETER_ADDRESS = "0xA47B01Cfb50e668dA4a1b0Ae2fFE56dca34Cae65";
-
-let url = "https://zksync2-testnet.zksync.dev";
-let zkSyncProvider = new Provider(url);
-const dummyWallet = new Wallet(
-    "ca5d6fbfc07e61202eff0dd5bd253cd1e698e650fd7f4715a818eadde3e9cd04"
-).connect(zkSyncProvider);
+let zkSyncProvider = new Provider(ZKSYNC_URL_PROVIDER);
 
 declare global {
     interface Window {
@@ -30,7 +27,7 @@ let provider: any;
 let signer: any;
 let account: any;
 let aaFactory: any;
-let mockAccount: any;
+let aa: any;
 let limiterPlugin: any;
 let greeter: any;
 
@@ -73,29 +70,22 @@ const init = async (props: { updateState: any }) => {
                 AA_FACTORY_ARTIFACT.abi,
                 signer
             );
-            mockAccount = new ethers.Contract(
-                MOCK_AA_ADDRESS,
-                MOCK_AA_ARTIFACT.abi,
-                signer
-            );
+
             limiterPlugin = new ethers.Contract(
                 LIMITER_PLUGIN_ADDRESS,
                 LIMITER_PLUGIN_ARTIFACT.abi,
-                dummyWallet
+                signer
             );
             greeter = new ethers.Contract(
                 GREETER_ADDRESS,
                 GREETER_ARTIFACT.abi,
-                dummyWallet
+                signer // dummyWallet
             );
+            props.updateState({ account: (accounts as any)[0] });
         };
 
         await _init();
 
-        ethereum.on("accountsChanged", async (accounts) => {
-            props.updateState({ account: (accounts as any)[0] });
-            await _init();
-        });
         return { err: "" };
     }
     return { err: "Need to install Metamask" };
@@ -106,7 +96,10 @@ const deployNewAA = async (props: { ownerAddr: string }) => {
     const { ownerAddr } = props;
 
     await delay();
-    const salt = ethers.constants.HashZero;
+    const salt = ethers.utils.hexZeroPad(
+        ethers.utils.hexlify(Math.floor(Math.random() * 332132312)),
+        32
+    );
 
     const tx = await aaFactory.deployAccount(salt, ownerAddr);
     await tx.wait();
@@ -127,29 +120,45 @@ const deployNewAA = async (props: { ownerAddr: string }) => {
 const getAA_Info = async (props: { addr: string }) => {
     console.log("called", { getAA_Info: props });
 
+    aa = new ethers.Contract(props.addr, AA_ARTIFACT.abi, signer);
+
     const { addr } = props;
-    await delay();
-    return {
-        err: "",
-        balance: "1.533367 ETH",
-        plugins: [
-            {
-                name: "erc20-limit",
-                authority: "0x275986f4F52a03A24C926616e53165bc27edF65e",
-                limit: "0.123 ETH",
-            },
-            {
-                name: "erc20-limit",
-                authority: "0x275986f4F52a03A24C926616e53165bc27edF65e",
-                limit: "0.523 ETH",
-            },
-            {
-                name: "erc20-limit",
-                authority: "0x9999919239192952378fa81234123151512356346346",
-                limit: "0.123 ETH",
-            },
-        ],
-    };
+    const limit = parseInt(
+        (await limiterPlugin.activeLimits(addr, account)).toString()
+    );
+
+    console.log({ limit });
+
+    const owner = await aa.owner();
+    const balance = `${(await provider.getBalance(addr)).toString()} WEI`;
+
+    if (limit > 0) {
+        return {
+            err: "",
+            owner,
+            balance,
+            plugins: [
+                {
+                    name: "Enforced Limit",
+                    authority: account,
+                    limit: `${limit} WEI`,
+                },
+            ],
+        };
+    } else {
+        return {
+            err: "",
+            owner,
+            balance,
+            plugins: [],
+        };
+    }
+};
+
+const addLimitPlugin = async (props: { aaAddr: string }) => {
+    aa = new ethers.Contract(props.aaAddr, AA_ARTIFACT.abi, signer);
+    await aa.activatePlugin(LIMITER_PLUGIN_ADDRESS);
+    return { err: "" };
 };
 
 const createLimitPlugin = async (props: {
@@ -166,7 +175,7 @@ const createLimitPlugin = async (props: {
         },
     ]);
 
-    const gasLimit = ethers.BigNumber.from("2000000");
+    const gasLimit = await provider.estimateGas(aaTx); //ethers.BigNumber.from("200000000");
     const gasPrice = await provider.getGasPrice();
 
     aaTx = {
@@ -195,7 +204,7 @@ const createLimitPlugin = async (props: {
         customSignature: signature,
     };
 
-    console.log(aaTx);
+    console.log({ aaTx });
 
     const sentTx = await zkSyncProvider.sendTransaction(utils.serialize(aaTx));
     await sentTx.wait();
@@ -205,26 +214,27 @@ const createLimitPlugin = async (props: {
     return { err: "" };
 };
 
-const setGreeting = async (props: {
+const deactivateLimitPlugin = async (props: {
     aaAddr: string;
-    message: string;
-    amount: string;
+    authority: string;
+    limit: string;
 }) => {
-    console.log("called", { greet: props });
+    console.log("called", { createLimitPlugin: props });
 
-    let aaTx = await greeter.populateTransaction.setGreeting(props.message);
+    let aaTx = await limiterPlugin.populateTransaction.removeWallets([
+        props.authority,
+    ]);
 
-    const gasLimit = await zkSyncProvider.estimateGas(aaTx);
-    //ethers.BigNumber.from("2000000");
-    const gasPrice = await zkSyncProvider.getGasPrice();
+    const gasLimit = await provider.estimateGas(aaTx); //ethers.BigNumber.from("20000000");
+    const gasPrice = await provider.getGasPrice();
 
     aaTx = {
         ...aaTx,
         from: props.aaAddr,
         gasLimit: gasLimit,
         gasPrice: gasPrice,
-        chainId: (await zkSyncProvider.getNetwork()).chainId,
-        nonce: await zkSyncProvider.getTransactionCount(props.aaAddr),
+        chainId: (await provider.getNetwork()).chainId,
+        nonce: await provider.getTransactionCount(props.aaAddr),
         type: 113,
         customData: {
             ergsPerPubdata: utils.DEFAULT_ERGS_PER_PUBDATA_LIMIT,
@@ -244,7 +254,7 @@ const setGreeting = async (props: {
         customSignature: signature,
     };
 
-    console.log(aaTx);
+    console.log({ aaTx });
 
     const sentTx = await zkSyncProvider.sendTransaction(utils.serialize(aaTx));
     await sentTx.wait();
@@ -252,6 +262,64 @@ const setGreeting = async (props: {
     console.log({ sentTx });
 
     return { err: "" };
+};
+
+const setGreeting = async (props: {
+    aaAddr: string;
+    message: string;
+    amount: string;
+}) => {
+    console.log("called", { greet: props });
+
+    try {
+        let aaTx = await greeter.populateTransaction.setGreeting(
+            props.message,
+            { value: ethers.BigNumber.from(props.amount) }
+        );
+
+        const gasLimit = await zkSyncProvider.estimateGas(aaTx);
+        const gasPrice = await zkSyncProvider.getGasPrice();
+
+        aaTx = {
+            ...aaTx,
+            from: props.aaAddr,
+            gasLimit: gasLimit,
+            gasPrice: gasPrice,
+            chainId: (await zkSyncProvider.getNetwork()).chainId,
+            nonce: await zkSyncProvider.getTransactionCount(props.aaAddr),
+            type: 113,
+            customData: {
+                ergsPerPubdata: utils.DEFAULT_ERGS_PER_PUBDATA_LIMIT,
+            } as types.Eip712Meta,
+            value: ethers.BigNumber.from(props.amount),
+        };
+
+        const signedTxHash = EIP712Signer.getSignedDigest(aaTx);
+
+        const signature = await _ethereum?.request({
+            method: "eth_sign",
+            params: [account, signedTxHash],
+        });
+
+        aaTx.customData = {
+            ...aaTx.customData,
+            customSignature: signature,
+        };
+
+        console.log(aaTx);
+
+        const sentTx = await zkSyncProvider.sendTransaction(
+            utils.serialize(aaTx)
+        );
+        await sentTx.wait();
+
+        console.log({ sentTx });
+
+        return { err: "" };
+    } catch (err) {
+        console.log(err, (err as any).body);
+        return { err: "Limit Plugin Validation failed" };
+    }
 };
 
 const retrieveGreeting = async () => {
@@ -267,6 +335,8 @@ export {
     getSigner,
     getAccount,
     createLimitPlugin,
+    deactivateLimitPlugin,
     setGreeting,
     retrieveGreeting,
+    addLimitPlugin,
 };

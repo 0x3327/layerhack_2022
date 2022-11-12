@@ -29,6 +29,7 @@ const Management = (props: { state: any; updateState: any }) => {
     const [isLoadingInfo, setIsLoadingInfo] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState("");
 
+    const [aaOwner, setAaOwner] = useState("");
     const [aaBalance, setAaBalance] = useState("");
     const [aaPlugins, setAaPlugins] = useState(Array<PluginData>);
 
@@ -45,10 +46,11 @@ const Management = (props: { state: any; updateState: any }) => {
         setAaPlugins([]);
         setLoadingMessage("Fetching AA information...");
 
-        const { balance, plugins, err } = await getAA_Info({
+        const { owner, balance, plugins, err } = await getAA_Info({
             addr: aaAddr,
         });
         if (err == "") {
+            setAaOwner(owner);
             setAaBalance(balance);
             setAaPlugins(plugins);
             setIsLoadingInfo(false);
@@ -112,6 +114,10 @@ const Management = (props: { state: any; updateState: any }) => {
                 <Spinner isOpen={isLoadingInfo} message={loadingMessage} />
                 <div className="AA_Info">
                     <div className="Field">
+                        <div className="Identifier">Owner:</div>
+                        <div className="Value">{aaOwner}</div>
+                    </div>{" "}
+                    <div className="Field">
                         <div className="Identifier">Balance:</div>
                         <div className="Value">{aaBalance}</div>
                     </div>
@@ -143,7 +149,11 @@ const Management = (props: { state: any; updateState: any }) => {
                 <div className="ActivePlugins">
                     <h3>Active plugins:</h3>
                     {aaPlugins.map((e) => (
-                        <LimitPluginInfo></LimitPluginInfo>
+                        <LimitPluginInfo
+                            aaAddr={aaAddr}
+                            authority={e.authority}
+                            limit={e.limit}
+                        ></LimitPluginInfo>
                     ))}
                 </div>
             </div>

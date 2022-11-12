@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { render } from "react-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { createLimitPlugin } from "../../chain/interactions";
+import { createLimitPlugin, addLimitPlugin } from "../../chain/interactions";
 
 import Spinner from "../Spinner";
 
@@ -25,6 +25,14 @@ const LimitPluginCreation = (props: {
             <div className="LimitPluginCreation">
                 <div className="Container0">
                     <h1>Enforced limit : Creation</h1>
+                    <h1
+                        className="CloseButton"
+                        onClick={async () => {
+                            await addLimitPlugin({ aaAddr: props.aaAddr });
+                        }}
+                    >
+                        Enable
+                    </h1>
                     <h1
                         className="CloseButton"
                         onClick={() => {

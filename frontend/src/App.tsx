@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { MetaMaskInpageProvider } from "@metamask/providers";
 
 import Home from "./pages/Home";
 import Deployment from "./pages/Deployment";
@@ -11,6 +12,13 @@ import Navbar from "./components/Navbar";
 import "./style/css/App.css";
 import "./style/css/config.css";
 
+import { init } from "./chain/interactions";
+
+declare global {
+    interface Window {
+        ethereum?: MetaMaskInpageProvider;
+    }
+}
 const App = () => {
     const [state, setState] = useState({
         loggedIn: false,
@@ -18,8 +26,22 @@ const App = () => {
     } as any);
 
     const updateState = (newValues: any) => {
-        setState({ ...state, ...newValues });
+        const newState = { ...state, ...newValues };
+        localStorage.setItem("state", JSON.stringify(newState));
+        console.log(newState);
+        setState(newState);
     };
+
+    useEffect(() => {
+        const prevState = localStorage.getItem("state");
+        if (prevState != null) setState(JSON.parse(prevState as string));
+        const { ethereum } = window;
+        if (ethereum != null)
+            ethereum.on("accountsChanged", async (accounts) => {
+                // props.updateState({ account: (accounts as any)[0] });
+                await init({ updateState });
+            });
+    }, []);
 
     return (
         <BrowserRouter>
