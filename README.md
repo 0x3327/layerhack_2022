@@ -39,26 +39,26 @@ sequenceDiagram
     title Account Abstraction Plugin
 
     alt Successful validation
-    User->Account:Please execute this transaction
+    User->>Account:Please execute this transaction
     activate Account
     loop For each plugin
-        Account->Plugin:Is this transaction valid according to you?
-        Note over Plugin:Check validation logic
-        Plugin->Account:Yup, all good
+        Account->>Plugin:Is this transaction valid<br/>according to you?
+        Note over Plugin:Check validation<br/>logic
+        Plugin->>Account:Yup, all good
     end
-    Account->]:Execute transaction
+    Note over Account:Execute transaction
     deactivate Account
 
     else Failed validation
 
-    User->Account:Please execute this transaction
+    User->>Account:Please execute this transaction
     activate Account
     loop For each plugin
-        Account->Plugin:Is this transaction valid\naccording to you?
-        Note over Plugin:Check validation logic
-        Plugin->Account:No, something's not right
+        Account->>Plugin:Is this transaction valid<br/>according to you?
+        Note over Plugin:Check validation<br/>logic
+        Plugin->>Account:No, something's<br/>not right
     end
-    Account->User:This transaction is invalid
+    Account->>User:This transaction is invalid
     deactivate Account
 
     end
