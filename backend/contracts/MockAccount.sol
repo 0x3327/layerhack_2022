@@ -64,7 +64,7 @@ contract MockAccount is IAccount, IERC1271 {
                 (_transaction.reserved[0])
             )
         );
-
+        return;
         bytes32 txHash;
         // While the suggested signed hash is usually provided, it is generally
         // not recommended to rely on it to be present, since in the future
@@ -137,7 +137,7 @@ contract MockAccount is IAccount, IERC1271 {
                     0
                 )
             }
-            require(success);
+            // require(success);
         }
     }
 

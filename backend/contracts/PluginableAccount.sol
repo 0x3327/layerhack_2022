@@ -21,6 +21,8 @@ contract PluginableAccount is IAccount, IERC1271 {
     // to get transaction hash
     using TransactionHelper for Transaction;
 
+    event NewPluginActivated (address plugin);
+
     // state variables for account owners
     address public owner;
 
@@ -78,36 +80,40 @@ contract PluginableAccount is IAccount, IERC1271 {
         bool isOwner = _isSignedByOwner(txHash, _transaction.signature);
 
         if (isOwner) {
-            return;
-        }
 
-        if (
-            address(uint160(_transaction.to)) == address(this) ||
-            activePlugins.length == 0
-        ) {
-            require(isOwner);
-        }
-
-        // Pozovi plugin-ove
-        for (uint256 i = 0; i < activePlugins.length; i += 1) {
-            if (address(uint160(_transaction.to)) == activePlugins[i]) {
-                require(isOwner);
+        } else {
+            if (
+                address(uint160(_transaction.to)) == address(this) ||
+                activePlugins.length == 0
+            ) {
+                require(false, "Not signed by owner - plugin length is zero");
             }
 
-            if (!IPlugin(activePlugins[i]).isValid(_transaction)) {
-                revert("Plugin validation failed");
+            // Iterate over all plugins
+            for (uint256 i = 0; i < activePlugins.length; i += 1) {
+                if (address(uint160(_transaction.to)) == activePlugins[i]) {
+                    revert("Only owner can interact with Plugin management");
+                }
+
+                if (!IPlugin(activePlugins[i]).isValid(_transaction)) {
+                    revert("Plugin validation failed");
+                }
             }
         }
+
+        
     }
 
     function activatePlugin(address _newPlugin) public {
-        require(msg.sender == address(this));
+        require(msg.sender == address(this) || msg.sender == owner, "Only AA or Owner can call this method");
 
         activePlugins.push(_newPlugin);
+
+        emit NewPluginActivated(_newPlugin);
     }
 
     function removePlugin(address _plugin) public {
-        require(msg.sender == address(this));
+        require(msg.sender == address(this) || msg.sender == owner, "Only AA or Owner can call this method");
 
         for (uint256 i = 0; i < activePlugins.length; i += 1) {
             if (activePlugins[i] == _plugin) {
