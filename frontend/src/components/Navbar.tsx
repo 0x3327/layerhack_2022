@@ -14,7 +14,7 @@ const Navbar = (props: { state: any; updateState: any }) => {
                 <h4 className="LogoText">zkSync - Account Abstraction</h4>
             </div>
             <div className="Container0">
-                <h5 className="Signer">{`Signer:   ${state.account.slice(
+                <h5 className="Signer">{`Selected Signer:   ${state.account.slice(
                     0,
                     10
                 )}...${state.account.slice(state.account.length - 5)}`}</h5>

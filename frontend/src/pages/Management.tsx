@@ -79,7 +79,7 @@ const Management = (props: { state: any; updateState: any }) => {
                 close={() => setLimitPluginCreationOpen(false)}
             ></LimitPluginCreation>
             <div className="Container0">
-                <h1>Management</h1>
+                <h1>Plugin Management</h1>
                 <div
                     className="GreeterButton"
                     onClick={() => setGreeterOpen(true)}
@@ -127,17 +127,17 @@ const Management = (props: { state: any; updateState: any }) => {
                     </div>
                 </div>
                 <div className="AddPlugin">
-                    <h3>Add Plugin:</h3>
+                    <h3>Activate Plugin:</h3>
                     <div className="PluginInfoContainer">
                         <div
                             className="PluginInfo"
                             onClick={() => setLimitPluginCreationOpen(true)}
                         >
-                            <h4>Enforced Limit</h4>
-                            <h5 className="Live">Live</h5>
+                            <h4>Ether Limit</h4>
+                            <h5 className="Live">Available</h5>
                         </div>
                         <div className="PluginInfo">
-                            <h4>ERC20 Limit</h4>
+                            <h4>Session Keys</h4>
                             <h5 className="ComingSoon">Coming Soon</h5>
                         </div>
                         <div className="PluginInfo">

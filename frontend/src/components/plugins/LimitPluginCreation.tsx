@@ -24,14 +24,14 @@ const LimitPluginCreation = (props: {
             <Spinner isOpen={spinnerOpen} message={spinnerMessage}></Spinner>
             <div className="LimitPluginCreation">
                 <div className="Container0">
-                    <h1>Enforced limit : Creation</h1>
+                    <h1>Ether Limit Plugin</h1>
                     <h1
                         className="CloseButton"
                         onClick={async () => {
                             await addLimitPlugin({ aaAddr: props.aaAddr });
                         }}
                     >
-                        Enable
+                        Activate Plugin
                     </h1>
                     <h1
                         className="CloseButton"
@@ -44,7 +44,7 @@ const LimitPluginCreation = (props: {
                 </div>
                 <div className="FieldsContainer">
                     <div className="Field">
-                        <div className="Name">Authority:</div>
+                        <div className="Name">Spender:</div>
                         <input
                             className="Input0"
                             onChange={(e) => setAuthority(e.target.value)}
@@ -75,7 +75,7 @@ const LimitPluginCreation = (props: {
                         }
                     }}
                 >
-                    Create
+                    Set Limit
                 </div>
             </div>
         </div>
