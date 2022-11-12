@@ -42,8 +42,8 @@ sequenceDiagram
     User->Account:Please execute this transaction
     activate Account
     loop For each plugin
-        Account->Plugin:Is this transaction valid\naccording to you?
-        box over Plugin:Check validation\nlogic
+        Account->Plugin:Is this transaction valid according to you?
+        Note over Plugin:Check validation logic
         Account<-Plugin:Yup, all good
     end
     Account->]:Execute transaction
