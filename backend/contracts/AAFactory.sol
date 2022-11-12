@@ -7,6 +7,8 @@ import "@matterlabs/zksync-contracts/l2/system-contracts/SystemContractsCaller.s
 contract AAFactory {
     bytes32 public aaBytecodeHash;
 
+    event CreatedNewAA (address newAA);
+
     constructor(bytes32 _aaBytecodeHash) {
         aaBytecodeHash = _aaBytecodeHash;
     }
@@ -26,5 +28,7 @@ contract AAFactory {
         );
 
         (accountAddress, ) = abi.decode(returnData, (address, bytes));
+
+        emit CreatedNewAA(accountAddress);
     }
 }
