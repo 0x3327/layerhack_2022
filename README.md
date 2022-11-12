@@ -28,10 +28,13 @@ A user can activate new plugins by adding to this array, or deactivate existing 
 During the execution of the `verifyTransaction` function, the `isValid` function is called for each plugin active on that account. If all plugins return a true value, the transaction is considered allowed and it gets executed. If any plugin returns a false value the transaction will get rejected.
 
 
+![AAP Object Diagram image](./AAP_Object_Diagram.png)
+
+
 ## Example - LimiterPlugin
 
 We implemented a restriction that specifies how much value is a particular transaction allowed to have based on the signer of the transaction. This enables finer control over spending limits of certain keys a user has. For example, a specific wallet should not be allowed to spend more than 0.01 ETH in a single transaction. 
 
 ## Sequence Diagram
 
-![AAP Diagram image](./AAP_Diagram.png)
+![AAP Sequence Diagram image](./AAP_Sequence_Diagram.png)
