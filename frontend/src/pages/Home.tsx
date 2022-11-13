@@ -10,8 +10,6 @@ import {
 
 import { init, getSigner, getAccount } from "../chain/interactions";
 
-const INTRO_TEXT = "Built for the Encode.Club's LayerHack 2022";
-
 const Home = (props: { state: any; updateState: any }) => {
     const navigate = useNavigate();
     const { state, updateState } = props;
