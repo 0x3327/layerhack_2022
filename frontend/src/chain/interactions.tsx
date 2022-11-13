@@ -328,6 +328,16 @@ const retrieveGreeting = async () => {
     return { err: "", greeting };
 };
 
+const hasLimitPlugin = async (props: { aaAddr: string }) => {
+    aa = new ethers.Contract(props.aaAddr, AA_ARTIFACT.abi, signer);
+    try {
+        await aa.activePlugins(0);
+        return { err: "", hasIt: true };
+    } catch {
+        return { err: "", hasIt: false };
+    }
+};
+
 export {
     init,
     deployNewAA,
@@ -339,4 +349,5 @@ export {
     setGreeting,
     retrieveGreeting,
     addLimitPlugin,
+    hasLimitPlugin,
 };

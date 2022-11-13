@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { createLimitPlugin, addLimitPlugin } from "../../chain/interactions";
+import {
+    createLimitPlugin,
+    addLimitPlugin,
+    hasLimitPlugin,
+} from "../../chain/interactions";
 
 import Spinner from "../Spinner";
 
@@ -12,9 +16,17 @@ const LimitPluginCreation = (props: {
 }) => {
     const [spinnerOpen, setSpinnerOpen] = useState(false);
     const [spinnerMessage, setSpinnerMessage] = useState("");
+    const [hasThePluginActivated, setHasThePluginActivated] = useState(false);
 
     const [authority, setAuthority] = useState("");
     const [limit, setLimit] = useState("");
+
+    useEffect(() => {
+        (async () => {
+            const { err, hasIt } = await hasLimitPlugin(props);
+            setHasThePluginActivated(hasIt);
+        })();
+    });
 
     if (props.isOpen == false) {
         return null;
@@ -25,14 +37,22 @@ const LimitPluginCreation = (props: {
             <div className="LimitPluginCreation">
                 <div className="Container0">
                     <h1>Ether Limit Plugin</h1>
-                    <h1
-                        className="CloseButton"
-                        onClick={async () => {
-                            await addLimitPlugin({ aaAddr: props.aaAddr });
-                        }}
-                    >
-                        Activate Plugin
-                    </h1>
+                    {hasThePluginActivated == false ? (
+                        <h1
+                            className="CloseButton"
+                            onClick={async () => {
+                                await addLimitPlugin({ aaAddr: props.aaAddr });
+                                const { err, hasIt } = await hasLimitPlugin(
+                                    props
+                                );
+                                setHasThePluginActivated(hasIt);
+                            }}
+                        >
+                            Activate Plugin
+                        </h1>
+                    ) : (
+                        <h1 className="GreenButton">Activated Plugin</h1>
+                    )}
                     <h1
                         className="CloseButton"
                         onClick={() => {

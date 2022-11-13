@@ -23,24 +23,30 @@ const App = () => {
     const [state, setState] = useState({
         loggedIn: false,
         account: "",
+        monitoredAccounts: [],
     } as any);
 
     const updateState = (newValues: any) => {
         const newState = { ...state, ...newValues };
-        localStorage.setItem("state", JSON.stringify(newState));
+        localStorage.setItem("aa-state", JSON.stringify(newState));
         console.log(newState);
         setState(newState);
     };
 
     useEffect(() => {
-        const prevState = localStorage.getItem("state");
-        if (prevState != null) setState(JSON.parse(prevState as string));
-        const { ethereum } = window;
-        if (ethereum != null)
-            ethereum.on("accountsChanged", async (accounts) => {
-                // props.updateState({ account: (accounts as any)[0] });
+        (async () => {
+            const prevState = localStorage.getItem("aa-state");
+            if (prevState != null) {
+                setState(JSON.parse(prevState as string));
                 await init({ updateState });
-            });
+            }
+            const { ethereum } = window;
+            if (ethereum != null)
+                ethereum.on("accountsChanged", async (accounts) => {
+                    // props.updateState({ account: (accounts as any)[0] });
+                    await init({ updateState });
+                });
+        })();
     }, []);
 
     return (

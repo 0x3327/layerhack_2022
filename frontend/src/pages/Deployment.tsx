@@ -58,6 +58,10 @@ const Deployment = (props: { state: any; updateState: any }) => {
                         setDisplayMessage("Broadcasting transaction...");
                         if (err == "") {
                             navigate(`/management/${aaAddr}`);
+                            props.updateState({
+                                monitoredAccounts:
+                                    props.state.monitoredAccounts.push(aaAddr),
+                            });
                         } else {
                             //TODO: display error message
                         }

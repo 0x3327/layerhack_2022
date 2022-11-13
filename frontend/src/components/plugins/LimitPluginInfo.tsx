@@ -17,11 +17,11 @@ const LimitPluginInfo = (props: {
                     <div className="Value">Enforced limit</div>
                 </div>
                 <div className="Field">
-                    <div className="Identifier">Authority</div>
+                    <div className="Identifier">Spender:</div>
                     <div className="Value">{props.authority}</div>
                 </div>
                 <div className="Field">
-                    <div className="Identifier">Limit</div>
+                    <div className="Identifier">Limit:</div>
                     <div className="Value">{props.limit}</div>
                 </div>
             </div>

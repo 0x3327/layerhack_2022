@@ -5,7 +5,7 @@
   left: 50%;
   transform: translate(-50%, 0);
   padding: 20px;
-  width: 400px !important;
+  width: 500px !important;
   border-radius: 5px;
 }
 
@@ -54,7 +54,7 @@
   top: 20px;
   left: 50%;
   transform: translate(-50%, 0);
-  width: 400px !important;
+  width: 500px !important;
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.8);
   color: rgb(23, 26, 73);
@@ -64,7 +64,7 @@
   position: absolute;
   transform: translate(-50%, 0);
   left: 50%;
-  width: 300px;
+  width: 400px;
 }
 .SpinnerContainer .Spinner {
   display: inline-block;
@@ -127,4 +127,18 @@
 .Button1:hover {
   background-color: #171a49;
   cursor: pointer;
+}
+
+a {
+  color: white;
+}
+
+.GreenButton {
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 20px;
+  margin: auto 0;
+  padding: 5px;
+  border: 1px solid rgba(60, 235, 60, 0.864);
+  color: rgba(60, 235, 60, 0.864);
 }/*# sourceMappingURL=config.css.map */

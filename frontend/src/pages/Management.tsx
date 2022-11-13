@@ -88,6 +88,10 @@ const Management = (props: { state: any; updateState: any }) => {
                 </div>
             </div>
 
+            {/* {props.state.monitoredAccounts.map((aa: string) => (
+                <div>{`${aa.slice(0, 7)}...${aa.slice(aa.length - 5)}`}</div>
+            ))} */}
+
             <h3>Information:</h3>
             <div className="InputContainer">
                 <input

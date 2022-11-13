@@ -12,7 +12,7 @@ $defaultElementWidht: 400px;
     left: 50%;
     transform: translate(-50%, 0);
     padding: 20px;
-    width: 400px !important;
+    width: 500px !important;
     border-radius: 5px;
 }
 
@@ -62,7 +62,7 @@ $defaultElementWidht: 400px;
     top: 20px;
     left: 50%;
     transform: translate(-50%, 0);
-    width: 400px !important;
+    width: 500px !important;
     border-radius: 5px;
     background-color: rgba(255, 255, 255, 0.8);
     color: rgba(23, 26, 73, 1);
@@ -71,7 +71,7 @@ $defaultElementWidht: 400px;
         position: absolute;
         transform: translate(-50%, 0);
         left: 50%;
-        width: 300px;
+        width: 400px;
     }
     .Spinner {
         display: inline-block;
@@ -123,4 +123,17 @@ $defaultElementWidht: 400px;
         background-color: $color0;
         cursor: pointer;
     }
+}
+
+a {
+    color: white;
+}
+.GreenButton {
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 20px;
+    margin: auto 0;
+    padding: 5px;
+    border: 1px solid rgba(60, 235, 60, 0.864);
+    color: rgba(60, 235, 60, 0.864);
 }
