@@ -56,6 +56,12 @@ For both sub-directories, the development setup process is similiar - `cd <subdi
 
 ### Video demonstration
 
+<center>
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/FNWH2i9Q31E/0.jpg)](https://www.youtube.com/watch?v=FNWH2i9Q31E)
+
+</center>
+
 ### Website
 
 -   The project is deployed to : https://layerhack-zksync-aa-3327.herokuapp.com/
